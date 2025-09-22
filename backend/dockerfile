@@ -1,0 +1,11 @@
+FROM eclipse-temurin:21-jdk-alpine
+
+WORKDIR /app
+
+COPY /*.p12 keystore.p12
+
+COPY /*.jar mamKaca-0.0.1-SNAPSHOT.jar
+
+EXPOSE 8080
+
+ENTRYPOINT ["java", "-jar", "mamKaca-0.0.1-SNAPSHOT.jar"]

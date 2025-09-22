@@ -1,0 +1,100 @@
+app.name: mamkaca
+build.version: 1.0
+server:
+  port: 8080
+  ssl:
+    key-store: keystore.p12
+    key-store-password: tenbashi
+    keyStoreType: PKCS12
+    keyAlias: tomcat
+    enabled: true
+  address: 0.0.0.0
+  tomcat:
+    threads:
+      max: 50
+
+spring:
+  application:
+    name: mamkaca-api
+  security:
+    user:
+      name: bartokac
+      password: kacKACkac1982
+  autoconfigure:
+    exclude: org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration
+  data:
+    mongodb:
+      uri: ${MONGODB_URI}
+#      uri: mongodb+srv://bartkac:q3SDFvfAolKoRCSd@abramovvicz.3rfwsua.mongodb.net/?retryWrites=true&w=majority&appName=abramovvicz //todo: zrobi? to jako profilowane
+      auto-index-creation: true
+      security: disable
+      database: mamkaca
+  webmvc:
+    cors:
+      allowed-origins: "*"
+      allowed-methods: "GET,POST,PUT,DELETE,OPTIONS"
+  web:
+    cors:
+      allowed-origins: "https://mamkaca.pl"
+      allowed-methods: "GET,POST,PUT,DELETE,OPTIONS"
+      allowed-headers: "*"
+
+management:
+  info:
+    env:
+      enabled: true
+  endpoint:
+    health:
+      show-details: always
+      probes:
+        enabled: true
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+
+logging:
+  level:
+    root: INFO
+    pl.mamkaca: DEBUG
+    org.springframework.data.mongodb: INFO
+    org.mongodb.driver.cluster: INFO
+
+resilience4j:
+  ratelimiter:
+    configs:
+      default:
+        limitForPeriod: 100
+        limitRefreshPeriod: 1s
+        timeoutDuration: 0
+
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    operationsSorter: method
+
+---
+spring:
+  config:
+    activate:
+      on-profile: prod
+  security:
+    user:
+      name: bartokac
+      password: 1982kacKACkac1982
+    autoconfigure:
+      exclude: org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration
+    data:
+      mongodb:
+        uri: ${MONGODB_URI}
+        #      uri: mongodb+srv://bartkac:q3SDFvfAolKoRCSd@abramovvicz.3rfwsua.mongodb.net/?retryWrites=true&w=majority&appName=abramovvicz //todo: zrobi? to jako profilowane
+        auto-index-creation: true
+        security: disable
+        #todo: zmienic aby było połączenie security
+        database: mamkaca
+    webmvc:
+      cors:
+        allowed-origins: "*"
+        allowed-methods: "GET,POST,PUT,DELETE,OPTIONS"
