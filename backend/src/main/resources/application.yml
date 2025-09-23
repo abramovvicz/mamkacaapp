@@ -22,12 +22,18 @@ spring:
       password: ${SECURITY_USER_PASSWORD}
   autoconfigure:
     exclude: org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration
-  data:
-    mongodb:
-      uri: ${MONGODB_URI}
-      auto-index-creation: true
-      security: disable
-      database: mamkaca
+  datasource:
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/mamkaca}
+    username: ${SPRING_DATASOURCE_USERNAME:postgres}
+    password: ${SPRING_DATASOURCE_PASSWORD:postgres}
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: validate   # lub update na dev
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+    open-in-view: false
   webmvc:
     cors:
       allowed-origins: "*"
@@ -85,13 +91,18 @@ spring:
       password: ${SECURITY_USER_PASSWORD}
     autoconfigure:
       exclude: org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration
-    data:
-      mongodb:
-        uri: ${MONGODB_URI}
-        auto-index-creation: true
-        security: disable
-        #todo: zmienic aby było połączenie security
-        database: mamkaca
+  datasource:
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/mamkaca}
+    username: ${SPRING_DATASOURCE_USERNAME:postgres}
+    password: ${SPRING_DATASOURCE_PASSWORD:postgres}
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: validate   # lub update na dev
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+    open-in-view: false
     webmvc:
       cors:
         allowed-origins: "*"

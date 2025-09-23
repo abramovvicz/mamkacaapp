@@ -9,7 +9,6 @@ import pl.mamkaca.application.ports.input.StatsService;
 import pl.mamkaca.domain.DateRange;
 import pl.mamkaca.domain.Stats;
 
-import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 

@@ -4,29 +4,28 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.index.CompoundIndex;
-import org.springframework.data.mongodb.core.index.Indexed;
-import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.LocalDate;
 
-@Document(collection = "pl")
+@Entity
+@Table(name = "votes",
+       uniqueConstraints = @UniqueConstraint(name = "uk_device_date", columnNames = {"device_hash", "date"}))
 @Data
 @Builder
-@NoArgsConstructor
 @AllArgsConstructor
-@CompoundIndex(name = "device_date_idx", def = "{'deviceHash': 1, 'date': 1}", unique = true)
+@NoArgsConstructor
 public class VoteEntity {
-    @Id
-    private String id;
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(name = "device_hash", nullable = false, length = 255)
     private String deviceHash;
 
-    @Indexed
+    @Column(name = "date", nullable = false)
     private LocalDate date;
 
+    @Column(name = "has_hangover", nullable = false)
     private boolean hasHangover;
-
-    private Long createdAt;
 }
