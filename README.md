@@ -36,137 +36,112 @@ MamKaca.pl to aplikacja webowa wspierająca osoby w procesie wychodzenia z uzale
 
 ## 🛠️ Stack technologiczny
 
-### Backend
-- **Java Spring Boot** - główny framework backendowy
-- **Kotlin** - nowoczesny język JVM dla wybranych modułów
-- **Spring Security** - autoryzacja i bezpieczeństwo
-- **Spring Data JPA** - warstwa dostępu do danych
-- **PostgreSQL** - baza danych
-- **Redis** - cache i sesje
+### Backend (`backend/`)
+- Spring Boot 3 (Java 21)
+- Spring Web, Security (SecurityAutoConfiguration obecnie wyłączone w `application.yml`)
+- Spring Data MongoDB (baza: MongoDB)
+- Actuator, Lombok, Testcontainers
 
-### Frontend
-- **TypeScript** - typowany JavaScript
-- **React/Vue.js** - framework frontendowy
-- **Tailwind CSS** - stylizacja
-- **PWA** - obsługa offline i notyfikacje push
+### Frontend (`front/`)
+- Vite + React + TypeScript
+- Tailwind CSS, shadcn-ui
+
+### Android (`android/`)
+- Aplikacja natywna w Kotlinie (Gradle)
 
 ### DevOps
-- **Docker** - konteneryzacja
-- **GitHub Actions** - CI/CD
-- **Nginx** - reverse proxy
-- **Certbot** - certyfikaty SSL
+- Docker (kontener backendu), Fly.io/Procfile (deploy), SSL (PKCS12)
 
-## 🚀 Instalacja i uruchomienie
+## 🚀 Instalacja i uruchomienie lokalne
 
 ### Wymagania
-- Java 17+
+- Java 21+
 - Node.js 18+
-- PostgreSQL 13+
-- Redis 6+
-- Docker (opcjonalnie)
+- MongoDB (lokalnie lub przez `MONGODB_URI`)
+- Docker (opcjonalnie dla backendu)
 
-### Konfiguracja backendu
+### Backend
 
 ```bash
-# Klonowanie repozytorium
-git clone https://github.com/username/mamkaca.pl.git
-cd mamkaca.pl
-
-# Konfiguracja bazy danych
-cp application.properties.example application.properties
-# Edytuj application.properties z własnymi ustawieniami DB
-
-# Uruchomienie backendu
+cd backend
+# Uruchomienie w trybie deweloperskim
 ./gradlew bootRun
+
+# Zmienna środowiskowa wymagana przez Spring Data MongoDB
+export MONGODB_URI="mongodb://localhost:27017/mamkaca"
+
+# Alternatywnie: build JAR
+./gradlew clean bootJar
+java -jar build/libs/mamKaca-0.0.1-SNAPSHOT.jar
 ```
 
-### Konfiguracja frontendu
+Konfiguracja serwera (SSL, port, użytkownik security) znajduje się w `backend/src/main/resources/application.yml`. Aplikacja oczekuje pliku `keystore.p12` jeśli SSL jest włączony.
+
+### Frontend
 
 ```bash
-cd frontend
+cd front
 npm install
 npm run dev
 ```
 
-### Docker (zalecane dla developmentu)
+### Android
+
+Uruchom w Android Studio lub z linii komend:
 
 ```bash
-docker-compose up -d
+cd android
+./gradlew assembleDebug
 ```
 
-## 🏗️ Architektura aplikacji
+## 🐳 Docker (backend)
+
+W katalogu `backend/` znajduje się `dockerfile` przygotowany do uruchomienia JAR-a.
+
+```bash
+cd backend
+./gradlew clean bootJar
+docker build -t mamkaca-backend -f dockerfile .
+docker run -p 8080:8080 -e MONGODB_URI="mongodb://host.docker.internal:27017/mamkaca" \
+  -v $(pwd)/keystore.p12:/app/keystore.p12 mamkaca-backend
+```
+
+Uwaga: Obraz oczekuje `keystore.p12` w katalogu buildu (kopiowany do kontenera).
+
+## 🏗️ Struktura repozytorium
 
 ```
-mamkaca.pl/
+mamkacaapp/
 ├── backend/
-│   ├── src/main/java/pl/mamkaca/
-│   │   ├── auth/          # Moduł autoryzacji
-│   │   ├── user/          # Zarządzanie użytkownikami
-│   │   ├── tracking/      # Śledzenie dni trzeźwości
-│   │   ├── support/       # System wsparcia i porad
-│   │   ├── analytics/     # Analityka i raporty
-│   │   └── notification/  # Powiadomienia
-│   ├── src/main/kotlin/   # Moduły w Kotlinie
-│   └── src/main/resources/
-├── frontend/
-│   ├── src/
-│   │   ├── components/    # Komponenty React/Vue
-│   │   ├── pages/         # Strony aplikacji
-│   │   ├── services/      # Komunikacja z API
-│   │   └── utils/         # Narzędzia pomocnicze
-├── docker-compose.yml
+│   ├── src/main/java/pl/mamkaca/...
+│   ├── src/main/resources/application.yml
+│   ├── build.gradle
+│   └── dockerfile
+├── front/
+│   ├── src/...
+│   └── package.json
+├── android/
+│   └── app/src/main/...
 └── README.md
 ```
 
-## 📱 Funkcjonalności w planach
-
-- [ ] Aplikacja mobilna (React Native/Flutter)
-- [ ] Grupy wsparcia online
-- [ ] Integracja z wearables (monitorowanie stresu)
-- [ ] Chatbot AI do natychmiastowego wsparcia
-- [ ] Gamifikacja (odznaczenia, poziomy)
-- [ ] Eksport danych do PDF
-- [ ] API dla terapeutów/ośrodków leczenia
+## 🔐 Bezpieczeństwo i konfiguracja
+- Zmienna `MONGODB_URI` powinna wskazywać na instancję MongoDB (lokalną lub w chmurze).
+- W `application.yml` włączone jest SSL i zdefiniowany alias keystore; dostarcz `keystore.p12` lub wyłącz SSL na czas developmentu.
+- W `application.yml` znajdują się przykładowe dane konfiguracyjne (użytkownik, hasło) – nie używaj ich w produkcji.
 
 ## 🤝 Wkład w projekt
 
-Każdy wkład w rozwój projektu jest mile widziany! Jeśli chcesz pomóc:
-
-1. **Fork** repozytorium
-2. Utwórz **branch** dla swojej funkcjonalności (`git checkout -b feature/nowa-funkcjonalnost`)
-3. **Commit** swoje zmiany (`git commit -m 'Dodanie nowej funkcjonalności'`)
-4. **Push** do brancha (`git push origin feature/nowa-funkcjonalnost`)
-5. Otwórz **Pull Request**
-
-### Obszary, w których potrzebujemy pomocy:
-- 🎨 UI/UX Design
-- 📱 Rozwój aplikacji mobilnej
-- 🔍 Testowanie i QA
-- 📚 Dokumentacja
-- 🌐 Tłumaczenia
-- 🧠 Doradztwo psychologiczne/terapeutyczne
+1. Fork repozytorium
+2. Utwórz branch (`feature/...`)
+3. Commit i push
+4. Otwórz Pull Request
 
 ## 📄 Licencja
 
-Ten projekt jest udostępniony na licencji MIT - zobacz plik [LICENSE](LICENSE) po więcej szczegółów.
+MIT
 
-## 📞 Kontakt i wsparcie
+## 📞 Kontakt
 
-- **Website**: [mamkaca.pl](https://mamkaca.pl)
-- **Email**: kontakt@mamkaca.pl
-- **Issues**: [GitHub Issues](https://github.com/username/mamkaca.pl/issues)
-
-## ⚠️ Ważne informacje
-
-**MamKaca.pl nie zastępuje profesjonalnej pomocy medycznej czy terapeutycznej.** Jeśli borykasz się z poważnym uzależnieniem, skonsultuj się z lekarzem lub terapeutą.
-
-### Linki do pomocy:
-- **Anonimowi Alkoholicy**: [aa.org.pl](https://aa.org.pl)
-- **PARPA** (Państwowa Agencja Rozwiązywania Problemów Alkoholowych): [parpa.pl](https://www.parpa.pl)
-- **Telefon zaufania**: 116 123
-
----
-
-**Razem możemy więcej! 💪**
-
-*Jeśli ten projekt pomógł Ci w Twojej drodze do trzeźwości, rozważ podzielenie się swoją historią - może zainspiruje innych do zmiany.*s
+- Strona: [mamkaca.pl](https://mamkaca.pl)
+- Issues: repozytorium Git
