@@ -4,7 +4,7 @@ server:
   port: 8080
   ssl:
     key-store: keystore.p12
-    key-store-password: tenbashi
+    key-store-password: ${KEYSTORE_PASSWORD}
     keyStoreType: PKCS12
     keyAlias: tomcat
     enabled: true
@@ -19,13 +19,12 @@ spring:
   security:
     user:
       name: bartokac
-      password: kacKACkac1982
+      password: ${SECURITY_USER_PASSWORD}
   autoconfigure:
     exclude: org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration
   data:
     mongodb:
       uri: ${MONGODB_URI}
-#      uri: mongodb+srv://bartkac:q3SDFvfAolKoRCSd@abramovvicz.3rfwsua.mongodb.net/?retryWrites=true&w=majority&appName=abramovvicz //todo: zrobi? to jako profilowane
       auto-index-creation: true
       security: disable
       database: mamkaca
@@ -83,13 +82,12 @@ spring:
   security:
     user:
       name: bartokac
-      password: 1982kacKACkac1982
+      password: ${SECURITY_USER_PASSWORD}
     autoconfigure:
       exclude: org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration
     data:
       mongodb:
         uri: ${MONGODB_URI}
-        #      uri: mongodb+srv://bartkac:q3SDFvfAolKoRCSd@abramovvicz.3rfwsua.mongodb.net/?retryWrites=true&w=majority&appName=abramovvicz //todo: zrobi? to jako profilowane
         auto-index-creation: true
         security: disable
         #todo: zmienic aby było połączenie security
